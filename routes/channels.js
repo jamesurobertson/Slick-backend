@@ -4,6 +4,7 @@ const { asyncHandler } = require("../utils");
 
 const router = express.Router();
 
+// Creates a channel
 router.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -19,6 +20,7 @@ router.post(
 
 );
 
+// get all messages in a channel
 router.get(
   "/:id(\\d+)",
   asyncHandler(async (req, res) => {
@@ -31,23 +33,7 @@ router.get(
   })
 );
 
-router.post(
-  "/:id",
-  asyncHandler(async (req, res) => {
-    const channelId = parseInt(req.params.id, 10);
-    const { userId, content } = req.body;
-    const message = await Message.create({
-      userId,
-      content,
-      messageableType: "channel",
-      messageableId: channelId,
-      channelId,
-    });
-
-    const user = await res.status(201).json({ message });
-  })
-);
-
+// User joins a channel
 router.post('/:channelId/:userId', asyncHandler(async (req, res) => {
     const channelId = parseInt(req.params.channelId, 10)
     const userId = parseInt(req.params.userId, 10)
@@ -61,6 +47,7 @@ router.post('/:channelId/:userId', asyncHandler(async (req, res) => {
 }))
 
 
+// Deletes a channel
 router.delete(
   "/:id(\\d+)",
   asyncHandler(async (req, res) => {

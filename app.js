@@ -4,6 +4,7 @@ const { environment } = require('./config');
 const cors = require('cors');
 const db = require('./db/models')
 
+const messageRouter = require('./routes/message')
 const channelRouter = require('./routes/channels')
 const userRouter = require('./routes/users')
 
@@ -16,6 +17,7 @@ app.use(cors({ origin }));
 
 app.use('/channel', channelRouter)
 app.use('/user', userRouter)
+app.use('/message', messageRouter)
 
 
 app.get('/', (req, res) => {

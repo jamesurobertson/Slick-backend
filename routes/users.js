@@ -74,4 +74,11 @@ router.post(
   })
 );
 
+// get user info
+router.get('/:id', asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10)
+    const user = await User.findOne({where: {id}})
+    res.json(user)
+}))
+
 module.exports = router;
