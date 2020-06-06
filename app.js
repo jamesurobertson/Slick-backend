@@ -5,6 +5,7 @@ const cors = require('cors');
 const db = require('./db/models')
 
 const channelRouter = require('./routes/channels')
+const userRouter = require('./routes/users')
 
 const app = express();
 
@@ -14,6 +15,7 @@ const origin = process.env.FRONTEND_URL;
 app.use(cors({ origin }));
 
 app.use('/channel', channelRouter)
+app.use('/user', userRouter)
 
 
 app.get('/', (req, res) => {

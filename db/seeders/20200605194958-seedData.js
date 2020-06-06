@@ -31,7 +31,7 @@ module.exports = {
       "Users",
       [
         {
-          displayName: "jamesurobertson",
+          fullName: "James Robertson",
           email: "jamesurobertson@gmail.com",
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
@@ -39,7 +39,7 @@ module.exports = {
         },
 
         {
-          displayName: "BMorgan",
+          fullName: "Bryce Morgan",
           email: "bryce@gmail.com",
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
@@ -91,9 +91,9 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-    await queryInterface.bulkDele("Messages", null, {});
-    await queryInterface.bulkDele("UserChannels", null, {});
-    await queryInterface.bulkDele("Users", null, {});
-    return queryInterface.bulkDele("Channels", null, {});
+    await queryInterface.bulkDelete("Messages", null, {});
+    await queryInterface.bulkDelete("UserChannels", null, {});
+    await queryInterface.bulkDelete("Users", null, {});
+    return queryInterface.bulkDelete("Channels", null, {});
   },
 };
