@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const { User } = require("../db/models");
+const { User, UserChannel, Channel } = require("../db/models");
 const { asyncHandler } = require("../utils");
 const { requireAuth, getUserToken } = require("../auth");
 const { check, validationResult } = require("express-validator");
@@ -17,13 +17,14 @@ validateUserFields = [
     .isEmail()
     .withMessage("You'll need to enter a valid email.")
     .custom((value) => {
-        return User.findOne({ where: { email: value } })
-          .then((user) => {
-            if (user) {
-              return Promise.reject('The provided Email Address is already in use by another account');
-            }
-          });
-      }),
+      return User.findOne({ where: { email: value } }).then((user) => {
+        if (user) {
+          return Promise.reject(
+            "The provided Email Address is already in use by another account"
+          );
+        }
+      });
+    }),
   check("password")
     .exists({ checkFalsy: true })
     .withMessage("Please provide a value for Password")
@@ -56,7 +57,7 @@ router.post(
 
     if (!validatorErrors.isEmpty()) {
       const errors = validatorErrors.array().map((error) => error.msg);
-      res.json(['ERRORS',...errors]);
+      res.json(["ERRORS", ...errors]);
     }
 
     const { name: fullName, email, password } = req.body;
@@ -75,10 +76,35 @@ router.post(
 );
 
 // get user info
-router.get('/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id, 10)
-    const user = await User.findOne({where: {id}})
-    res.json(user)
-}))
+router.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const user = await User.findOne({
+      where: { id },
+      attributes: [
+        "fullName",
+        "displayName",
+        "title",
+        "email",
+        "profileImageUrl",
+      ],
+    });
+    res.json(user);
+  })
+);
+
+//get all channels that user is subscribed too
+router.get(
+  "/channel/:id",
+  asyncHandler(async (req, res) => {
+    const userId = parseInt(req.params.id, 10);
+    const channels = await UserChannel.findAll({
+      where: { userId },
+      include: [{ model: Channel }],
+    });
+    res.json(channels);
+  })
+);
 
 module.exports = router;

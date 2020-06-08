@@ -1,9 +1,10 @@
 const express = require("express");
 const { Message, Channel, UserChannel } = require("../db/models");
 const { asyncHandler } = require("../utils");
+const {requireAuth} = require('../auth')
 
 const router = express.Router();
-
+router.use(requireAuth)
 // Creates a channel
 router.post(
   "/",

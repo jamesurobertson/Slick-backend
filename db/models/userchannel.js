@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   UserChannel.associate = function(models) {
     // associations can be defined here
+    UserChannel.belongsTo(models.Channel, {foreignKey: "channelId"})
+    UserChannel.belongsTo(models.User, {foreignKey: "userId"})
   };
   return UserChannel;
 };
