@@ -20,6 +20,7 @@ module.exports = {
       [
         {
           name: "General",
+          topic: 'Click here to change the topic',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -32,6 +33,7 @@ module.exports = {
       [
         {
           fullName: "James Robertson",
+          displayName: "James Robertson",
           email: "jamesurobertson@gmail.com",
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
@@ -40,6 +42,7 @@ module.exports = {
 
         {
           fullName: "Bryce Morgan",
+          displayName: "Bryce Morgan",
           email: "bryce@gmail.com",
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),

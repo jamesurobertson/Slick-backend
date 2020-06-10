@@ -49,6 +49,17 @@ const validateEmailPassword = [
     .withMessage("This is required - you'll need to enter a password."),
 ];
 
+//get all users
+
+router.get('/', asyncHandler(async(req, res) => {
+    const users = await User.findAll({
+        attributes: ['id','fullName', 'displayName', 'title', 'email', 'profileImageUrl']
+    })
+
+    res.json(users)
+}))
+
+
 router.post(
   "/",
   validateUserFields,
@@ -98,12 +109,28 @@ router.get(
 router.get(
   "/channel/:id",
   asyncHandler(async (req, res) => {
+      // TODO get userID from JWT instead of params
     const userId = parseInt(req.params.id, 10);
     const channels = await UserChannel.findAll({
       where: { userId },
       include: [{ model: Channel }],
     });
-    res.json(channels);
+    const payload = []
+    await Promise.all(channels.map(async channel => {
+        const {Channel, Channel: { id, name, topic
+        }} = channel
+        const num = await Channel.numUser()
+        Channel.numUsers = num
+        payload.push({
+            id,
+            name,
+            topic,
+            numUsers: num
+        })
+        return Channel
+    }))
+    console.log(payload)
+    res.json(payload);
   })
 );
 

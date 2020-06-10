@@ -28,6 +28,7 @@ const restoreUser = (req, res, next) => {
         return res.set("WWW-Authenicate", "Bearer").status(401).end();
 
     }
+
     return jwt.verify(token, secret, null, async (err, jwtPayload) => {
         if (err) {
             err.status = 401;

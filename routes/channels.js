@@ -21,6 +21,13 @@ router.post(
 
 );
 
+//get # of users that belong to a channel
+// router.get('/users/:channelId', asyncHandler(async (req, res) => {
+//     const channelId = parseInt(req.params.channelId, 10)
+//     const number = await UserChannel.findAll({where: {channelId}})
+//     res.json(number.length)
+// }))
+
 // get all messages in a channel
 router.get(
   "/:id(\\d+)",
@@ -37,6 +44,7 @@ router.get(
 // User joins a channel
 router.post('/:channelId/:userId', asyncHandler(async (req, res) => {
     const channelId = parseInt(req.params.channelId, 10)
+    // TODO: get userId from JWT instead of params
     const userId = parseInt(req.params.userId, 10)
 
     const followed = await UserChannel.create({
@@ -45,6 +53,21 @@ router.post('/:channelId/:userId', asyncHandler(async (req, res) => {
       });
 
       res.json(followed)
+}))
+
+
+// updates channel info i.e. the topic
+router.put('/:channelId', asyncHandler(async (req, res) => {
+    const channelId = parseInt(req.params.channelId, 10)
+    const channel = await Channel.findByPk(channelId)
+
+
+    if (channel) {
+        await channel.update({topic: req.body.topic})
+        res.json({channel})
+    } else {
+        next()
+    }
 }))
 
 

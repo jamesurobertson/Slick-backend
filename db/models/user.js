@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         through: {
             model: 'Message',
             scope: {
-                followableType: 'user'
+                messageableType: 'user'
             }
         },
         foreignKey: 'userId',
@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         through: {
             model: 'Message',
             scope: {
-                followableType: 'user'
+                messageableType: 'user'
             }
         },
         foreignKey: 'messageableId',

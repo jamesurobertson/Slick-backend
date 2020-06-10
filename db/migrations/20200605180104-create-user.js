@@ -13,7 +13,6 @@ module.exports = {
         type: Sequelize.STRING,
       },
       displayName: {
-        unique: true,
         type: Sequelize.STRING,
       },
       title: {

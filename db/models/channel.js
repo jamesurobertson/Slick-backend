@@ -1,9 +1,15 @@
+
 'use strict';
 module.exports = (sequelize, DataTypes) => {
+  const UserChannel = sequelize.import('./userchannel');
+
   const Channel = sequelize.define('Channel', {
     name: {
         type:DataTypes.STRING,
         allowNull: false,
+    },
+    topic: {
+        type:DataTypes.STRING
     }
 
   }, {});
@@ -27,5 +33,11 @@ module.exports = (sequelize, DataTypes) => {
 
     Channel.belongsToMany(models.User, columnMapping)
   };
+
+  Channel.prototype.numUser = async function() {
+    const number = await UserChannel.findAll({where: {channelId: this.id}})
+    return number.length
+  }
+
   return Channel;
 };
