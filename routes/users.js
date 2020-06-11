@@ -129,7 +129,6 @@ router.get(
         })
         return Channel
     }))
-    console.log(payload)
     res.json(payload);
   })
 );

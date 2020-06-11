@@ -1,33 +1,46 @@
 const express = require("express");
 const { Message, Channel, UserChannel } = require("../db/models");
 const { asyncHandler } = require("../utils");
-const {requireAuth} = require('../auth')
+const { requireAuth } = require("../auth");
 
 const router = express.Router();
-router.use(requireAuth)
+router.use(requireAuth);
 // Creates a channel
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const { name, userId } = req.body;
-    const channel = await Channel.create({ name: `#${name}` });
-    res.status(201).json({ channel });
+    const { name } = req.body;
+    const userId = req.user.id
+
+    const channel = await Channel.create({ name: `#${name}`, topic: 'Click here to Change Topic'});
 
     await UserChannel.create({
       channelId: channel.id,
       userId,
     });
-  })
 
+    const { id, name: name1, topic } = channel;
+    const numUsers = await channel.numUser();
+    const payload = {
+      id,
+      name: name1,
+      topic,
+      numUsers,
+    }
+
+    res.status(201).json(payload);
+  })
 );
 
 // get all channels
 
-router.get('/', asyncHandler(async(req,res) => {
-    const channels = await Channel.findAll()
-    res.json(channels)
-}))
-
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const channels = await Channel.findAll();
+    res.json(channels);
+  })
+);
 
 // get all messages in a channel
 router.get(
@@ -43,40 +56,46 @@ router.get(
 );
 
 // User joins a channel
-router.post('/:channelName', asyncHandler(async (req, res) => {
-    const name = req.params.channelName
-    console.log(name)
-    // TODO: get userId from JWT instead of params
-    const userId = req.user.id
-
-    const channel = await Channel.findOne({where: {name}})
-    console.log(channel)
-    const {id: channelId } = channel
-    console.log(channelId)
+router.post(
+  "/:channelName",
+  asyncHandler(async (req, res) => {
+    const name = req.params.channelName;
+    const userId = req.user.id;
+    const channel = await Channel.findOne({ where: { name } });
+    const { id: channelId, name: name1, topic } = channel;
 
     await UserChannel.create({
-        channelId,
-        userId,
-      });
+      channelId,
+      userId,
+    });
+    const numUsers = await channel.numUser();
+    const payload = {
+      id: channelId,
+      name: name1,
+      topic,
+      numUsers,
+    }
 
-      res.json(channel)
-}))
 
+    res.json(payload);
+  })
+);
 
 // updates channel info i.e. the topic
-router.put('/:channelId', asyncHandler(async (req, res) => {
-    const channelId = parseInt(req.params.channelId, 10)
-    const channel = await Channel.findByPk(channelId)
-
+router.put(
+  "/:channelId",
+  asyncHandler(async (req, res) => {
+    const channelId = parseInt(req.params.channelId, 10);
+    const channel = await Channel.findByPk(channelId);
 
     if (channel) {
-        await channel.update({topic: req.body.topic})
-        res.json({channel})
+      await channel.update({ topic: req.body.topic });
+      res.json({ channel });
     } else {
-        next()
+      next();
     }
-}))
-
+  })
+);
 
 // Deletes a channel
 router.delete(

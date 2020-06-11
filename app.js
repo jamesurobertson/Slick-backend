@@ -7,6 +7,7 @@ const db = require('./db/models')
 const messageRouter = require('./routes/message')
 const channelRouter = require('./routes/channels')
 const userRouter = require('./routes/users')
+const awsRouter = require('./routes/aws')
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors({ origin }));
 app.use('/channel', channelRouter)
 app.use('/user', userRouter)
 app.use('/message', messageRouter)
+app.use('/aws', awsRouter)
 
 
 app.get('/', (req, res) => {
