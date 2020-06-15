@@ -6,15 +6,17 @@ const { requireAuth } = require("../auth");
 const router = express.Router();
 router.use(requireAuth);
 
-
 // Creates a channel
 router.post(
   "/",
   asyncHandler(async (req, res) => {
     const { name } = req.body;
-    const userId = req.user.id
+    const userId = req.user.id;
 
-    const channel = await Channel.create({ name: `#${name}`, topic: 'Click here to Change Topic'});
+    const channel = await Channel.create({
+      name: `#${name}`,
+      topic: "Click here to Change Topic",
+    });
 
     await UserChannel.create({
       channelId: channel.id,
@@ -28,7 +30,7 @@ router.post(
       name: name1,
       topic,
       numUsers,
-    }
+    };
 
     res.status(201).json(payload);
   })
@@ -76,8 +78,7 @@ router.post(
       name: name1,
       topic,
       numUsers,
-    }
-
+    };
 
     res.json(payload);
   })
@@ -90,9 +91,20 @@ router.put(
     const channelId = parseInt(req.params.channelId, 10);
     const channel = await Channel.findByPk(channelId);
 
+
     if (channel) {
-      await channel.update({ topic: req.body.topic });
-      res.json({ channel });
+      await channel.update({ topic: req.body.topic, numUsers: req.body.numUsers });
+      const { id, name, topic, createdAt, updatedAt } = channel
+
+      const payload = {
+          id,
+          name,
+          topic,
+          numUsers: req.body.numUsers,
+          createdAt,
+          updatedAt,
+      }
+      res.json({ payload });
     } else {
       next();
     }
@@ -102,31 +114,19 @@ router.put(
 // Deletes a channel
 // TODO: Add this feature / leaving channels to front end
 router.delete(
-  "/:id(\\d+)",
+  "/:id",
   asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id, 10);
+    const channelId = parseInt(req.params.id, 10);
+    const userId = req.user.id;
 
-    const messages = await Message.findAll({
-      where: { messageableId: id },
+    const userChannel = await UserChannel.findOne({
+      where: { channelId, userId },
     });
 
-    const userChannels = await UserChannel.findAll({
-      where: { channelId: id },
-    });
-
-    const channel = await Channel.findOne({
-      where: { id },
-    });
-
-    if (userChannels) {
-      userChannels.forEach((channel) => channel.destroy());
+    if (userChannel) {
+      res.json(userChannel);
+      userChannel.destroy();
     }
-
-    if (messages) {
-      messages.forEach((message) => message.destroy());
-    }
-
-    channel.destroy();
 
     res.send(204).end();
   })

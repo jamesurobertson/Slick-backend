@@ -29,7 +29,6 @@ router.post(
         content,
         messageableType: "channel",
         messageableId: channelId,
-        channelId,
       });
 
       await res.status(201).json({ message });

@@ -87,7 +87,8 @@ function retrieveFile(filename,res){
 
   s3.getObject(getParams, function(err, data) {
     if (err){
-      return res.status(400).send({success:false,err:err});
+      retrieveFile(filename, res)
+    //   return res.status(400).send({success:false,err:err});
     }
     else{
       return res.send(data.Body);
