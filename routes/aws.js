@@ -2,6 +2,7 @@ const express = require("express");
 const { requireAuth } = require("../auth");
 const { User } = require("../db/models");
 const { asyncHandler } = require("../utils");
+const path = require('path')
 
 const multer = require('multer')
 const AWS = require('aws-sdk')
@@ -12,13 +13,13 @@ const router = express.Router();
 
 // configuring the DiscStorage engine.
 const storage = multer.diskStorage({
-    destination : 'uploads/',
-    filename: function (req, file, next) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        next(null, file.fieldname + '-' + uniqueSuffix)
-    }
+   destination: "./public/uploads/",
+   filename: function(req, file, cb){
+      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+   }
 });
-const upload = multer({ storage });
+
+const upload = multer({ storage, limits: {fileSize: 1000000} });
 
 //setting the credentials
 //The region should be the region of the bucket that you created
@@ -34,14 +35,12 @@ const s3= new AWS.S3();
 
 //POST method route for uploading file
 router.post('/post_file', requireAuth, upload.single('img'), asyncHandler(async(req, res) => {
-    console.log('do we get here?')
   //Multer middleware adds file(in case of single file ) or files(multiple files) object to the request object.
   //req.file is the demo_file
   uploadFile(req.file.path, req.file.filename ,res);
   const userId = req.user.id
-  console.log(userId)
   const user = await User.findByPk(userId)
-  await user.update({ profileImageUrl: `https://slickpics.s3.us-east-2.amazonaws.com/${req.file.filename}` });
+  await user.update({ profileImageUrl: `http://localhost:8080/aws/get_file/${req.file.filename}` });
   res.json(user)
 }))
 
@@ -73,7 +72,7 @@ function uploadFile(source,targetName,res){
         });
       }
       else{
-        console.log({'err':err});
+        console.error({'err':err});
       }
     });
   }

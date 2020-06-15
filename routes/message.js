@@ -1,5 +1,5 @@
 const express = require("express");
-const { Message, User } = require("../db/models");
+const { Message, User, Reaction} = require("../db/models");
 const { asyncHandler } = require("../utils");
 const {requireAuth} = require('../auth')
 
@@ -10,7 +10,7 @@ router.use(requireAuth)
 router.get('/', asyncHandler(async (req, res) => {
     const messages = await Message.findAll({
         attributes: ['id', 'createdAt', 'userId', 'content', 'messageableType', 'messageableId'],
-        include: [{model:User}]
+        include: [User],
     })
 
 
@@ -36,5 +36,25 @@ router.post(
     })
   );
 
+router.post('/reaction/:id', asyncHandler( async(req, res) => {
+    console.log('do we get here?')
+    const messageId = parseInt(req.params.id, 10)
+    const {id: emojiId, skin} = req.body
+    console.log(req.body)
+    const reaction = await Reaction.create({
+        messageId,
+        emojiId,
+        skin: skin || 1
+    })
+
+    console.log(reaction)
+
+    res.json(reaction)
+}))
+
+router.get('/reactions', asyncHandler(async(req, res) => {
+    const reactions = await Reaction.findAll()
+    res.json(reactions)
+}))
 
 module.exports = router;

@@ -4,15 +4,63 @@ const { port } = require("../config");
 
 const app = require("../app");
 const db = require("../db/models");
+const debug = require("debug")("backend:server");
+const socketIO = require('socket.io')
 
-// Check the database connection before starting the app.
+const http = require("http");
+
+const server = http.createServer(app);
+const io = socketIO(server);
+
+io.on("connection", (client) => {
+
+    console.log('connect to client!')
+
+//   client.on('change color', color => {
+//       console.log('color changed to ', color)
+//       io.emit('change color', color)
+//   })
+
+//   client.on('addChannel', channel => {
+//       console.log(channel)
+//   })
+
+//   client.on('sendChannelMessage', message => {
+//       console.log(message)
+//   })
+
+//   client.on('updateUserInfo', userInfo => {
+//       console.log(userInfo)
+//   })
+//   client.on('updateChannelInfo', channelInfo => {
+//       console.log(channelInfo)
+//   })
+//   client.on('receiveChannels', channels => {
+//       console.log(channels)
+//   })
+//   client.on('receiveUsers', users => {
+//       console.log(users)
+//   })
+//   client.on('changeChannel', channel => {
+//       console.log(channel)
+//   })
+//   client.on('receiveMessages', messages => {
+//       console.log(messages)
+//   })
+
+
+
+
+
+});;
+
 db.sequelize
   .authenticate()
   .then(() => {
     console.log("Database connection success! Sequelize is ready to use...");
 
     // Start listening for connections.
-    app.listen(port, () => console.log(`Listening on port ${port}...`));
+    server.listen(port, () => console.log(`Listening on port ${port}...`));
   })
   .catch((err) => {
     console.log("Database connection failure.");

@@ -5,6 +5,8 @@ const { requireAuth } = require("../auth");
 
 const router = express.Router();
 router.use(requireAuth);
+
+
 // Creates a channel
 router.post(
   "/",
@@ -55,7 +57,7 @@ router.get(
   })
 );
 
-// User joins a channel
+// User joins channel
 router.post(
   "/:channelName",
   asyncHandler(async (req, res) => {
@@ -98,6 +100,7 @@ router.put(
 );
 
 // Deletes a channel
+// TODO: Add this feature / leaving channels to front end
 router.delete(
   "/:id(\\d+)",
   asyncHandler(async (req, res) => {

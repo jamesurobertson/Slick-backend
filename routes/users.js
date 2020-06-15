@@ -12,8 +12,6 @@ validateUserFields = [
     .exists({ checkFalsy: true })
     .withMessage("You'll need to enter a name."),
   check("email")
-    .exists({ checkFalsy: true })
-    .withMessage("You'll need to enter a valid email.")
     .isEmail()
     .withMessage("You'll need to enter a valid email.")
     .custom((value) => {
@@ -26,8 +24,6 @@ validateUserFields = [
       });
     }),
   check("password")
-    .exists({ checkFalsy: true })
-    .withMessage("Please provide a value for Password")
     .isLength({ min: 6 })
     .withMessage("Password must be atleast 6 charachters")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/, "g")
@@ -60,6 +56,36 @@ router.get('/', asyncHandler(async(req, res) => {
 }))
 
 
+router.post('/login', validateEmailPassword, asyncHandler(async(req, res) => {
+    const validatorErrors = validationResult(req)
+
+    if (!validatorErrors.isEmpty()) {
+        const errors = validatorErrors.array().map((error) => error.msg);
+        res.json(["ERRORS", ...errors]);
+        return
+      }
+
+      const {email, password} = req.body
+
+    const user = await User.findOne({where: {email}})
+
+    if (user !== null) {
+        const passwordMatch = await bcrypt.compare(password, user.hashedPassword.toString())
+        if (passwordMatch) {
+            // loginUser(req, res, user)
+            const token = getUserToken(user);
+            res.status(201).json({
+                user: { id: user.id },
+                token,
+              });
+        } else {
+            res.json(["ERRORS", 'Email or Password does not match'])
+        }
+    }
+}))
+
+
+// create a user
 router.post(
   "/",
   validateUserFields,
@@ -69,6 +95,7 @@ router.post(
     if (!validatorErrors.isEmpty()) {
       const errors = validatorErrors.array().map((error) => error.msg);
       res.json(["ERRORS", ...errors]);
+      return
     }
 
     const { name: fullName, email, password } = req.body;
@@ -79,6 +106,12 @@ router.post(
       hashedPassword,
     });
     const token = getUserToken(user);
+
+    await UserChannel.create({
+        channelId: 1,
+        userId: user.id
+    })
+
     res.status(201).json({
       user: { id: user.id },
       token,
@@ -87,6 +120,7 @@ router.post(
 );
 
 // get user info
+// TODO: CHANGE TO GET ID FROM JWT
 router.get(
   "/:id",
   asyncHandler(async (req, res) => {
@@ -108,6 +142,7 @@ router.get(
 //get all channels that user is subscribed too
 router.get(
   "/channel/:id",
+  requireAuth,
   asyncHandler(async (req, res) => {
       // TODO get userID from JWT instead of params
     const userId = parseInt(req.params.id, 10);
@@ -132,5 +167,19 @@ router.get(
     res.json(payload);
   })
 );
+
+
+
+router.put('/updateUser', requireAuth, asyncHandler(async (req, res) => {
+    const id = req.user.id
+    const userInfo = req.body
+    const user = await User.findByPk(id)
+    if (user) {
+        await user.update(userInfo)
+        res.json(user)
+    } else {
+        next()
+    }
+}))
 
 module.exports = router;

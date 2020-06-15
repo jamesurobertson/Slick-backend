@@ -2,24 +2,27 @@ const express = require('express')
 const morgan = require("morgan");
 const { environment } = require('./config');
 const cors = require('cors');
-const db = require('./db/models')
 
 const messageRouter = require('./routes/message')
 const channelRouter = require('./routes/channels')
 const userRouter = require('./routes/users')
 const awsRouter = require('./routes/aws')
+const directMessageRouter = require('./routes/directMessage')
 
 const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.urlencoded({extended: true}))
 const origin = process.env.FRONTEND_URL;
-app.use(cors({ origin }));
+app.use(cors({origin}));
 
 app.use('/channel', channelRouter)
 app.use('/user', userRouter)
 app.use('/message', messageRouter)
+app.use('/directMessage', directMessageRouter)
 app.use('/aws', awsRouter)
+
 
 
 app.get('/', (req, res) => {

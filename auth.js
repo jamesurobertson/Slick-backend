@@ -24,8 +24,9 @@ const getUserToken = (user) => {
 
 const restoreUser = (req, res, next) => {
     const { token } = req;
+
     if (!token) {
-        return res.set("WWW-Authenicate", "Bearer").status(401).end();
+        return res.set("WWW-Authenticate", "Bearer").status(401).end();
 
     }
 
@@ -41,7 +42,7 @@ const restoreUser = (req, res, next) => {
             return next(e);
         }
         if (!req.user) {
-            return res.set("WWW-Authenicate", "Bearer").status(401).end();
+            return res.set("WWW-Authenticate", "Bearer").status(401).end();
         }
         return next();
     })
