@@ -37,17 +37,14 @@ router.post(
   );
 
 router.post('/reaction/:id', asyncHandler( async(req, res) => {
-    console.log('do we get here?')
     const messageId = parseInt(req.params.id, 10)
     const {id: emojiId, skin} = req.body
-    console.log(req.body)
     const reaction = await Reaction.create({
         messageId,
         emojiId,
         skin: skin || 1
     })
 
-    console.log(reaction)
 
     res.json(reaction)
 }))
