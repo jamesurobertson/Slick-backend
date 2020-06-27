@@ -1,56 +1,91 @@
 const express = require("express");
-const { Message, User, Reaction} = require("../db/models");
+const { Message, User, Reaction } = require("../db/models");
 const { asyncHandler } = require("../utils");
-const {requireAuth} = require('../auth')
+const { requireAuth } = require("../auth");
 
 const router = express.Router();
-router.use(requireAuth)
+router.use(requireAuth);
 
 // get all messages
-router.get('/', asyncHandler(async (req, res) => {
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
     const messages = await Message.findAll({
-        attributes: ['id', 'createdAt', 'userId', 'content', 'messageableType', 'messageableId'],
-        include: [User],
-    })
+      attributes: [
+        "id",
+        "createdAt",
+        "userId",
+        "content",
+        "messageableType",
+        "messageableId",
+      ],
+      include: [User],
+    });
 
-
-    await res.json(messages)
-}))
+    await res.json(messages);
+  })
+);
 
 // Send a message to a channel
 router.post(
-    "/:channelId",
-    asyncHandler(async (req, res) => {
-      const channelId = parseInt(req.params.channelId, 10);
-      const userId = req.user.id
-      const { content } = req.body;
-      const message = await Message.create({
-        userId,
-        content,
-        messageableType: "channel",
-        messageableId: channelId,
-      });
+  "/:channelId",
+  asyncHandler(async (req, res) => {
+    const channelId = parseInt(req.params.channelId, 10);
+    const userId = req.user.id;
+    const { content } = req.body;
+    const message = await Message.create({
+      userId,
+      content,
+      messageableType: "channel",
+      messageableId: channelId,
+    });
 
-      await res.status(201).json({ message });
-    })
-  );
+    await res.status(201).json({ message });
+  })
+);
 
-router.post('/reaction/:id', asyncHandler( async(req, res) => {
-    const messageId = parseInt(req.params.id, 10)
-    const {id: emojiId, skin} = req.body
+router.post(
+  "/reaction/:id",
+  asyncHandler(async (req, res) => {
+    const messageId = parseInt(req.params.id, 10);
+    const { id: emojiId, skin } = req.body;
     const reaction = await Reaction.create({
-        messageId,
-        emojiId,
-        skin: skin || 1
-    })
+      messageId,
+      emojiId,
+      skin: skin || 1,
+    });
 
+    res.json(reaction);
+  })
+);
 
-    res.json(reaction)
-}))
+// router.get('/check/:id', asyncHandler( async(req, res) => {
+//     const messageId = parseInt(req.params.id, 10)
+//     const message = await Message.findByPk(messageId)
+//     res.json(message)
+// }))
 
-router.get('/reactions', asyncHandler(async(req, res) => {
-    const reactions = await Reaction.findAll()
-    res.json(reactions)
-}))
+router.get(
+  "/reactions",
+  asyncHandler(async (req, res) => {
+    const reactions = await Reaction.findAll();
+    res.json(reactions);
+  })
+);
+
+router.delete(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+
+    Message.destroy({
+      where: {
+        id,
+      },
+    });
+
+    res.sendStatus(204).end();
+  })
+);
 
 module.exports = router;

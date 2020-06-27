@@ -104,6 +104,7 @@ router.post(
       fullName,
       email,
       hashedPassword,
+      profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592202535754.jpg'
     });
     const token = getUserToken(user);
 

@@ -42,7 +42,27 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     const channels = await Channel.findAll();
-    res.json(channels);
+
+    const payload = []
+
+
+    await Promise.all(channels.map(async channel => {
+        const {id, name, topic } = channel
+        console.log(id, name, topic)
+        const num = await channel.numUser()
+        payload.push({
+            id,
+            name,
+            topic,
+            numUsers: num
+        })
+        return channel
+    }))
+
+    console.log(payload)
+
+    // console.log(payload)
+    res.json(payload);
   })
 );
 
@@ -91,19 +111,21 @@ router.put(
     const channelId = parseInt(req.params.channelId, 10);
     const channel = await Channel.findByPk(channelId);
 
-
     if (channel) {
-      await channel.update({ topic: req.body.topic, numUsers: req.body.numUsers });
-      const { id, name, topic, createdAt, updatedAt } = channel
+      await channel.update({
+        topic: req.body.topic,
+        numUsers: req.body.numUsers,
+      });
+      const { id, name, topic, createdAt, updatedAt } = channel;
 
       const payload = {
-          id,
-          name,
-          topic,
-          numUsers: req.body.numUsers,
-          createdAt,
-          updatedAt,
-      }
+        id,
+        name,
+        topic,
+        numUsers: req.body.numUsers,
+        createdAt,
+        updatedAt,
+      };
       res.json({ payload });
     } else {
       next();
@@ -112,7 +134,6 @@ router.put(
 );
 
 // Deletes a channel
-// TODO: Add this feature / leaving channels to front end
 router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
@@ -124,6 +145,7 @@ router.delete(
     });
 
     if (userChannel) {
+      console.log(userChannel);
       res.json(userChannel);
       userChannel.destroy();
     }
