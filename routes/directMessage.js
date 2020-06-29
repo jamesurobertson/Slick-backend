@@ -18,12 +18,17 @@ router.post(
 
     if (!userToMessage) res.status(201).json("no user");
 
+    console.log(`user to message`, userToMessage.id)
+    console.log('user', userId)
     const findOne = await Channel.findOne({
       where: { name: `- ${userId} ${userToMessage.id}` },
     });
     const findTwo = await Channel.findOne({
         where: { name: `- ${userToMessage.id} ${userId}` },
       });
+
+    console.log(`FIND ONE`, findOne)
+    console.log(`FIND TWO`, findTwo)
 
     if (findOne) {
       await UserChannel.create({
@@ -55,6 +60,8 @@ router.post(
         topic,
         numUsers,
     };
+    res.status(201).json({ payload, userToMessage: userToMessage.fullName });
+
     } else {
       const dm = await Channel.create({
         name: `- ${userId} ${userToMessage.id}`,

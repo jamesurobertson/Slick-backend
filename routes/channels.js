@@ -48,7 +48,6 @@ router.get(
 
     await Promise.all(channels.map(async channel => {
         const {id, name, topic } = channel
-        console.log(id, name, topic)
         const num = await channel.numUser()
         payload.push({
             id,
@@ -59,9 +58,7 @@ router.get(
         return channel
     }))
 
-    console.log(payload)
 
-    // console.log(payload)
     res.json(payload);
   })
 );
@@ -145,7 +142,6 @@ router.delete(
     });
 
     if (userChannel) {
-      console.log(userChannel);
       res.json(userChannel);
       userChannel.destroy();
     }

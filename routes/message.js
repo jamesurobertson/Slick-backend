@@ -73,6 +73,16 @@ router.get(
   })
 );
 
+router.put('/:messageId', asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.messageId, 10)
+    const {content} = req.body
+        await Message.update({
+            content
+        },
+        {where: {id}})
+        res.sendStatus(200).end();
+}))
+
 router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
@@ -84,7 +94,7 @@ router.delete(
       },
     });
 
-    res.sendStatus(204).end();
+    res.sendStatus(200).end();
   })
 );
 
