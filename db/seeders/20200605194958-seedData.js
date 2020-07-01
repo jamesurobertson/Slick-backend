@@ -19,7 +19,7 @@ module.exports = {
       "Channels",
       [
         {
-          name: "General",
+          name: "#General",
           topic: "Click here to change the topic",
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -37,6 +37,7 @@ module.exports = {
           title: "Here to help",
           email: "bryce@gmail.com",
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191753603.jpeg',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -45,6 +46,7 @@ module.exports = {
           displayName: "Bakari Holme",
           title: "React Wiz",
           email: "bakari@gmail.com",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191771114.jpeg',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -52,8 +54,9 @@ module.exports = {
         {
           fullName: "John Wick",
           displayName: "John Wick",
-          email: "wick@gmail.com",
           title: "Dog Lover",
+          email: "wick@gmail.com",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191779575.jpg',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -61,8 +64,9 @@ module.exports = {
         {
           fullName: "Elon Musk",
           displayName: "Elon",
-          email: "elon@gmail.com",
           title: "Zoom Zoom",
+          email: "elon@gmail.com",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191794322.jpg',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -70,8 +74,9 @@ module.exports = {
         {
           fullName: "Jeff Bezoz",
           displayName: "Jeff",
+          title: "Buy $AMZN",
           email: "bezos@gmail.com",
-          title: "Buy Amazon please",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191802396.jpg',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -80,7 +85,8 @@ module.exports = {
           fullName: "Bill Gates",
           displayName: "Billy",
           email: "gates@gmail.com",
-          title: "Dog Lover",
+          title: "People Everywhere love Windows",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191873440.jpg',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -88,12 +94,24 @@ module.exports = {
         {
           fullName: "Alissa Crane",
           displayName: "Alissa Crane",
-          email: "alissa@gmail.com",
           title: "Gone but not forgotten",
+          email: "alissa@gmail.com",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592191880597.png',
           hashedPassword: bcrypt.hashSync(faker.internet.password()),
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          fullName: "Bob Ross",
+          displayName: "",
+          title: "Let's get Crazy",
+          email: "bobross@gmail.com",
+          profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1593492676395.png',
+          hashedPassword: bcrypt.hashSync(faker.internet.password()),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+
       ],
       { returning: true }
     );
@@ -143,6 +161,12 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+            channelId: 1,
+            userId: 8,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
       ],
       { returning: true }
     );
@@ -166,7 +190,7 @@ module.exports = {
       },
       {
         userId: 7,
-        content: "Hey, I'm here too! Everyone is telling me how cool Slick is. I'm not too impressed.",
+        content: "Hey, I'm here too! Everyone is telling me how cool Slick is.",
         messageableType: "channel",
         messageableId: 1,
         createdAt: new Date(),
@@ -174,7 +198,7 @@ module.exports = {
       },
       {
         userId: 5,
-        content: "Woah, woah, woah. I'd hire the person who built this. Who is the creator?",
+        content: "I'd hire the person who built this. Who is the creator?",
         messageableType: "channel",
         messageableId: 1,
         createdAt: new Date(),
@@ -215,6 +239,14 @@ module.exports = {
       {
         userId: 3,
         content: "John Wick checking in. Has anyone seen my dog?",
+        messageableType: "channel",
+        messageableId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 8,
+        content: "There are no mistakes, just happy accidents.",
         messageableType: "channel",
         messageableId: 1,
         createdAt: new Date(),

@@ -1,4 +1,5 @@
 const express = require("express");
+const {backendUrl} = require('../config/index')
 const bcrypt = require("bcryptjs");
 const { User, UserChannel, Channel } = require("../db/models");
 const { asyncHandler } = require("../utils");
@@ -104,7 +105,7 @@ router.post(
       fullName,
       email,
       hashedPassword,
-      profileImageUrl: 'http://localhost:8080/aws/get_file/IMAGE-1592202535754.jpg'
+      profileImageUrl: `${backendUrl}/aws/get_file/IMAGE-1592202535754.jpg`
     });
     const token = getUserToken(user);
 
